@@ -1,8 +1,8 @@
 import { Platform } from "react-native";
 import UserAvatar from "react-native-user-avatar";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
 
-import { StatusBar } from "expo-status-bar";
 import {
   SafeAreaView,
   StyleSheet,
@@ -24,7 +24,7 @@ if (os === "ios") {
 }
 
 export default function App() {
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     fetch("https://random-data-api.com/api/v2/users?size=10")
@@ -36,7 +36,7 @@ export default function App() {
         return response.json();
       })
       .then((resp) => {
-        return setData(resp);
+        return setData([...resp]);
       })
       .catch((err) => {
         console.error(err);
@@ -44,9 +44,29 @@ export default function App() {
 
     return () => {
       console.log("cleanup");
-      // console.log("data", data[1]);
+      // console.log("data", data[0]);
     };
   }, []);
+
+  function addOneUser() {
+    fetch("https://random-data-api.com/api/v2/users?size=1")
+      .then((response) => {
+        if (!response.ok) {
+          throw Error("Network request failed");
+        }
+
+        return response.json();
+      })
+      .then((resp) => {
+        return setData([resp, ...data]);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  let size = 80;
+  let borderRadius = 10;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,16 +79,25 @@ export default function App() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.infoContainer}>
-            <UserAvatar size={80} borderRadius={10} name={item.first_name} />
+            <UserAvatar
+              size={size}
+              borderRadius={borderRadius}
+              name={item.first_name}
+            />
 
             <View style={styles.itemsContainer}>
-              <Text style={styles.itemText}>ID: {item.id}</Text>
               <Text style={styles.itemText}>First Name: {item.first_name}</Text>
               <Text style={styles.itemText}>Last Name: {item.last_name}</Text>
             </View>
           </View>
         )}
       ></FlatList>
+
+      <Pressable style={styles.floatingActionButton} onPress={addOneUser}>
+        <Text>
+          <Ionicons name="add-circle" size={60} color="green" />
+        </Text>
+      </Pressable>
     </SafeAreaView>
   );
 }
@@ -97,10 +126,17 @@ const styles = StyleSheet.create({
   },
   itemsContainer: {
     flexDirection: "column",
-    gap: 3,
+    gap: 10,
     width: "60%",
   },
   itemText: {
     fontSize: 17,
+  },
+  floatingActionButton: {
+    position: "absolute",
+    bottom: 10,
+    right: 2,
+    borderRadius: 50,
+    padding: 10,
   },
 });
