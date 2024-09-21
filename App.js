@@ -10,6 +10,7 @@ import {
   View,
   FlatList,
   Pressable,
+  RefreshControl,
 } from "react-native";
 
 let os = Platform.OS;
@@ -25,6 +26,7 @@ if (os === "ios") {
 
 export default function App() {
   const [data, setData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetch("https://random-data-api.com/api/v2/users?size=10")
@@ -44,7 +46,6 @@ export default function App() {
 
     return () => {
       console.log("cleanup");
-      // console.log("data", data[0]);
     };
   }, []);
 
@@ -68,6 +69,28 @@ export default function App() {
   let size = 80;
   let borderRadius = 10;
 
+  function onRefresh() {
+    setRefreshing(true);
+    console.log("Refreshing...");
+    fetch("https://random-data-api.com/api/v2/users?size=10")
+      .then((response) => {
+        if (!response.ok) {
+          throw Error("Network request failed");
+        }
+
+        return response.json();
+      })
+      .then((resp) => {
+        setData([...resp]);
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setRefreshing(false);
+      });
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -75,6 +98,9 @@ export default function App() {
       </View>
 
       <FlatList
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         data={data}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
