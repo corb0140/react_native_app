@@ -67,9 +67,6 @@ export default function App() {
       });
   }
 
-  let size = 80;
-  let borderRadius = 10;
-
   function onRefresh() {
     setRefreshing(true);
     console.log("Refreshing...");
@@ -107,11 +104,7 @@ export default function App() {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.infoContainer}>
-              <UserAvatar
-                size={size}
-                borderRadius={borderRadius}
-                name={item.first_name}
-              />
+              <UserAvatar size={80} borderRadius={10} name={item.first_name} />
 
               <View style={styles.itemsContainer}>
                 <Text style={styles.itemText}>
