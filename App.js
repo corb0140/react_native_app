@@ -1,4 +1,5 @@
 import { Platform } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import UserAvatar from "react-native-user-avatar";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
@@ -92,39 +93,43 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.header}>Users List:</Text>
-      </View>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <View>
+          <Text style={styles.header}>Users List:</Text>
+        </View>
 
-      <FlatList
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        data={data}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.infoContainer}>
-            <UserAvatar
-              size={size}
-              borderRadius={borderRadius}
-              name={item.first_name}
-            />
+        <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          data={data}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.infoContainer}>
+              <UserAvatar
+                size={size}
+                borderRadius={borderRadius}
+                name={item.first_name}
+              />
 
-            <View style={styles.itemsContainer}>
-              <Text style={styles.itemText}>First Name: {item.first_name}</Text>
-              <Text style={styles.itemText}>Last Name: {item.last_name}</Text>
+              <View style={styles.itemsContainer}>
+                <Text style={styles.itemText}>
+                  First Name: {item.first_name}
+                </Text>
+                <Text style={styles.itemText}>Last Name: {item.last_name}</Text>
+              </View>
             </View>
-          </View>
-        )}
-      ></FlatList>
+          )}
+        ></FlatList>
 
-      <Pressable style={styles.floatingActionButton} onPress={addOneUser}>
-        <Text>
-          <Ionicons name="add-circle" size={60} color="green" />
-        </Text>
-      </Pressable>
-    </SafeAreaView>
+        <Pressable style={styles.floatingActionButton} onPress={addOneUser}>
+          <Text>
+            <Ionicons name="add-circle" size={60} color="green" />
+          </Text>
+        </Pressable>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
