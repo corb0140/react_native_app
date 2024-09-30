@@ -104,7 +104,12 @@ export default function App() {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.infoContainer}>
-              <UserAvatar size={80} borderRadius={10} name={item.first_name} />
+              <UserAvatar
+                size={80}
+                borderRadius={10}
+                src={item.avatar}
+                bgColor="#1a1a1a"
+              />
 
               <View style={styles.itemsContainer}>
                 <Text style={styles.itemText}>
